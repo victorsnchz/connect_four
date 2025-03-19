@@ -1,8 +1,8 @@
 import unittest
 import sys
 
-sys.path.append('../')
-from src.rules import Rules
+sys.path.append('src')
+from rules import Rules
 
 class TestRules(unittest.TestCase):
 
@@ -34,6 +34,9 @@ class TestRules(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             rules = Rules(connect_to_win=3)
+
+        with self.assertRaises(ValueError):
+            rules = Rules(points_to_win=0)
 
 if __name__ == '__main__':
     unittest.main()

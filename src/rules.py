@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+import enum
 
 @dataclass(frozen=True)
 class Rules:
@@ -17,19 +18,19 @@ class Rules:
         if type(self.columns) is not int:
             raise TypeError(f'columns must be int not {type(self.columns)}')
         
-        if self.columns < 6:
+        if self.columns < GameConfig.MIN_COLS:
             raise ValueError(f'columns must be at least 6')
         
         if type(self.rows) is not int:
             raise TypeError(f'rows must be int not {type(self.rows)}')
 
-        if self.rows < 6:
+        if self.rows < GameConfig.MIN_ROWS:
             raise ValueError(f'rows must be at least 6')
         
         if type(self.connect_to_win) is not int:
             raise TypeError(f'connect to win must be int not {type(self.connect_to_win)}')
 
-        if self.connect_to_win < 4:
+        if self.connect_to_win < GameConfig.MIN_CONNECT:
             raise ValueError(f'connect to win must be greater or equal to 4')
 
         if type(self.versus_human) is not bool:
@@ -37,3 +38,14 @@ class Rules:
         
         if type(self.points_to_win) is not int:
             raise TypeError(f'points to win must be bool not {type(self.points_to_win)}')
+        
+        if self.points_to_win < GameConfig.MIN_WINS:
+            raise ValueError(f'points to win must be greater or equal to 1') 
+
+
+@dataclass(frozen = True)
+class GameConfig:
+    MIN_ROWS = 6
+    MIN_COLS = 6
+    MIN_CONNECT = 4
+    MIN_WINS = 1
