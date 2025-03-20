@@ -131,11 +131,10 @@ class TestWinCondition(unittest.TestCase):
         start_row, start_col = 3, 2
         piece = input_board[start_row][start_col]
 
-        for direction, target in zip(list(Directions), targets):
+        for direction, target in zip(set(Directions), targets):
             
             recursive_count_result = self.score.player_wins(input_board,
-                                                            start_row, start_col,
-                                                            [direction]
+                                                            start_row, start_col
                                                             )
             self.assertEqual(recursive_count_result, target) 
 
@@ -153,10 +152,47 @@ class TestWinCondition(unittest.TestCase):
         for direction, target in zip(list(Directions), targets):
             
             recursive_count_result = self.score.player_wins(input_board,
-                                                            start_row, start_col,
-                                                            [direction]
+                                                            start_row, start_col
                                                             )
             self.assertEqual(recursive_count_result, target)
 
+class TestIsGridAlreadyWinning(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.score = Score(Rules())
+
+    def test_is_not_winning(self):
+
+        input_grid = helper_functions.get_board_input(self.__class__.__name__,
+                                                     sys._getframe().f_code.co_name)
+            
+        self.assertEqual(self.score.is_grid_already_winning(input_grid), False)
+    
+    @unittest.SkipTest
+    def test_is_winnning(self):
+
+        input_grid = helper_functions.get_board_input(self.__class__.__name__,
+                                                     sys._getframe().f_code.co_name)
+            
+        self.assertEqual(self.score.is_grid_already_winning(input_grid), True)
+
+        input_board = helper_functions.get_board_input(self.__class__.__name__,
+                                                     sys._getframe().f_code.co_name)
+        
+        targets = helper_functions.get_numeric_targets(self.__class__.__name__,
+                                                     sys._getframe().f_code.co_name) 
+
+        # include in test file?
+        start_row, start_col = 1, 1
+        piece = input_board[start_row][start_col]
+
+        for direction, target in zip(list(Directions), targets):
+            
+            recursive_count_result = self.score.recursive_count(direction, input_board,
+                                                                 start_row, start_col,
+                                                                 0, piece, 
+                                                                 visited_slots = set())
+            self.assertEqual(recursive_count_result, target) 
 if __name__ == '__main__':
     unittest.main()

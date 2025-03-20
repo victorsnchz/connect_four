@@ -10,7 +10,7 @@ class Rules:
     connect_to_win: int =  field(default = 4)
     versus_human: bool = field(default = True)
     points_to_win: int = field(default=1)
-    exclude_directions: set[Directions] = field(default = set) 
+    exclude_directions: set[Directions] = field(default_factory = set) 
 
     def __post_init__(self):
         self.validate_rules()
@@ -47,8 +47,9 @@ class Rules:
         if type(self.exclude_directions) is not set:
             raise TypeError(f'excluded directions must be contained in a set') 
 
-        if any(type(direction) for direction in self.exclude_directions) \
-            is not Directions:
+        if self.exclude_directions and \
+            any(type(direction) for direction in self.exclude_directions) \
+                is not Directions:
             raise TypeError(f'excluded directions must only contain Direction objects')
 
 

@@ -58,12 +58,12 @@ class Score:
 
         return count
     
-    def player_wins(self, grid: list[list[Piece]], row: int, col: int, 
-                    directions_to_check: set[Directions] ) -> bool:
+    def player_wins(self, grid: list[list[Piece]], row: int, col: int) -> bool:
         
         piece = grid[row][col]
 
-        for direction in directions_to_check:
+        for direction in \
+            set(Directions).symmetric_difference(self._rules.exclude_directions):
             
             visited_slots = set()
             if self.recursive_count(direction, grid, row, col, 0, 
@@ -71,3 +71,26 @@ class Score:
                 return True
         
         return False
+    
+    def is_grid_already_winning(self, grid):
+        score = Score(self._rules)
+
+        for direction in set(Directions).symmetric_difference(
+            self._rules.exclude_directions
+        ):
+            visited_slots = set()
+            
+            for row in range(len(grid)):
+                for col in range(len(grid[0])):    
+                    piece = grid[row][col]
+                    
+                    if (row, col) not in visited_slots \
+                        and piece != Piece.EMPTY \
+                        and self.recursive_count(
+                                direction, grid, row, col, 0, piece, visited_slots
+                            ) >= self._rules.connect_to_win:
+                        
+                        return True
+                    
+        return False
+                        

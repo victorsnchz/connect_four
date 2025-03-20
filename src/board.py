@@ -1,6 +1,7 @@
 from bookkeeping import Piece, Directions
 from rules import Rules, GameConfig
 from collections import defaultdict
+from score import Score
 
 class Board:
     def __init__(self, rules: Rules, grid: list[list[Piece]] = None ):
@@ -32,6 +33,10 @@ class Board:
         
         if len(set([len(row) for row in grid])) > 1:
             raise UserWarning(f'Grid rows should all have same size.')
+        
+        score = Score(rules=self._rules)
+        if score.is_grid_already_winning(grid):
+            raise UserWarning(f'Grid already contains a winning connect.')
 
         # no empty-cell below a non-empty-cells
         top_row = grid[0]
@@ -51,6 +56,9 @@ class Board:
                 raise UserWarning(f'{invalid} {conjugate} a valid piece') 
 
         return True
+
+
+
 
     def find_free_slot_in_columns(self, col: int) -> int:
 

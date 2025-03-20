@@ -76,6 +76,15 @@ class TestBoardCustomInitialization(unittest.TestCase):
         with self.assertRaises(UserWarning):
             board = Board(Rules(), grid = input_grid)
 
+    @unittest.SkipTest
+    def test_invalid_grid_already_winning(self):
+        input_grid = \
+            helper_functions.get_board_input(test_case=self.__class__.__name__,
+                                             test_name=sys._getframe().f_code.co_name)
+        
+        with self.assertRaises(UserWarning):
+            board = Board(Rules, grid=input_grid)
+
     def test_intruder(self):
         input_grid = \
             helper_functions.get_board_input(test_case=self.__class__.__name__,
@@ -98,18 +107,19 @@ class TestBoardCustomInitialization(unittest.TestCase):
                                    targets):
             self.assertEqual(counter, target)
         
-    
-    @unittest.SkipTest
     def test_is_grid_full(self):
-        pass
-    pass
+        input_grid = \
+            helper_functions.get_board_input(test_case=self.__class__.__name__,
+                                             test_name=sys._getframe().f_code.co_name)
+        board = Board(Rules(), grid = input_grid)
+        self.assertEqual(board.is_grid_full(), False)
 
 class TestBoardChanges(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         rules = Rules()
-        cls.board = Board(rules)
+        cls.board = Board(rules, )
 
     @unittest.SkipTest
     def test_add_piece(self):
