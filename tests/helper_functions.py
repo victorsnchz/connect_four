@@ -32,9 +32,10 @@ def get_numeric_targets(test_case, test_name):
                                     folder='targets')
     
     targets = read_file(target_file)
-    targets = [int(target) for target in targets if target.isnumeric()]
+    int_targets = [int(target) for target in targets.split(', ') 
+                   if target.lstrip('-').isnumeric()]
 
-    return targets
+    return int_targets
 
 def get_bool_targets(test_case, test_name):
     

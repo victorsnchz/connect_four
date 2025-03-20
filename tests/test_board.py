@@ -28,10 +28,10 @@ class TestBoardDefaultInitialization(unittest.TestCase):
         board = Board(self.rules)
         targets = \
             helper_functions.get_numeric_targets(test_case=self.__class__.__name__,
-                                                test_name=sys._getframe().f_code.co_name)
+                                               test_name=sys._getframe().f_code.co_name)
 
         for target, col_count in zip(targets, 
-                                     board.free_slot_in_columns.values()): 
+                                     board.free_index_in_columns.values()): 
             
             self.assertEqual(col_count, target)
 
@@ -76,14 +76,13 @@ class TestBoardCustomInitialization(unittest.TestCase):
         with self.assertRaises(UserWarning):
             board = Board(Rules(), grid = input_grid)
 
-    @unittest.SkipTest
     def test_invalid_grid_already_winning(self):
         input_grid = \
             helper_functions.get_board_input(test_case=self.__class__.__name__,
                                              test_name=sys._getframe().f_code.co_name)
         
         with self.assertRaises(UserWarning):
-            board = Board(Rules, grid=input_grid)
+            board = Board(Rules(), grid=input_grid)
 
     def test_intruder(self):
         input_grid = \
@@ -94,7 +93,7 @@ class TestBoardCustomInitialization(unittest.TestCase):
         with self.assertRaises(UserWarning):
             board = Board(Rules(), grid = input_grid)
 
-    def test_first_free_slot_in_columns(self):
+    def test_free_index_in_columns(self):
         input_grid = \
             helper_functions.get_board_input(test_case=self.__class__.__name__,
                                              test_name=sys._getframe().f_code.co_name)
@@ -103,7 +102,7 @@ class TestBoardCustomInitialization(unittest.TestCase):
                                              test_name=sys._getframe().f_code.co_name)
         
         board = Board(Rules(), grid = input_grid)
-        for counter, target in zip(board.free_slot_in_columns,
+        for counter, target in zip(board.free_index_in_columns.values(),
                                    targets):
             self.assertEqual(counter, target)
         
@@ -118,35 +117,64 @@ class TestBoardChanges(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        rules = Rules()
-        cls.board = Board(rules, )
+        custom_grid = \
+            helper_functions.get_board_input(test_case='TestBoardChanges',
+                                             test_name=sys._getframe().f_code.co_name)
+        cls.board = Board(Rules(), grid = custom_grid)
 
-    @unittest.SkipTest
     def test_add_piece(self):
-        pass
-    
-    pass
+        self.board.add_piece(Piece('R'), col = 1)
+        target = \
+            helper_functions.get_board_target(test_case=self.__class__.__name__,
+                                              test_name=sys._getframe().f_code.co_name)
+        self.assertEqual(self.board.grid, target)
 
 class TestFullBoard(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        custom_grid = helper_functions.get_board_input(test_case=cls.__class__.__qualname__)
-        rules = Rules()
-        cls.board = Board(rules)
     
-    @unittest.SkipTest
-    def test_is_grid_full(self):
-        self.assertEqual(self.board.is_grid_full(), True)
+    def test_full_grid(self):
+        input_grid = \
+            helper_functions.get_board_input(test_case=self.__class__.__name__,
+                                             test_name=sys._getframe().f_code.co_name)
+        board = Board(Rules(), input_grid)
+        self.assertEqual(board.is_grid_full(), True)
 
-    @unittest.SkipTest
     def test_add_piece(self):
-        with AssertionError(ValueError):
-            self.board.add_piece(Piece('R'))
+        input_grid = \
+            helper_functions.get_board_input(test_case=self.__class__.__name__,
+                                             test_name=sys._getframe().f_code.co_name)
+        board = Board(Rules(), input_grid)
         
-    @unittest.SkipTest
-    def test_free_col_counter(self):
-        free_columns = sum(self.board.free_slot_in_columns.values)
-        self.assertEqual(free_columns, 0)
+        with self.assertRaises(ValueError):
+            board.add_piece(Piece('R'), col = 0)
+
+    def test_free_index_in_columns(self):
+        input_grid = \
+            helper_functions.get_board_input(test_case=self.__class__.__name__,
+                                             test_name=sys._getframe().f_code.co_name)
+        board = Board(Rules(), input_grid)
+        free_columns = sum(board.free_index_in_columns.values())
+        self.assertEqual(free_columns, -6)
+
+    def test_one_free_col(self):
+        input_grid = \
+            helper_functions.get_board_input(test_case=self.__class__.__name__,
+                                             test_name=sys._getframe().f_code.co_name)
+        board = Board(Rules(), input_grid)
+        self.assertEqual(board.is_grid_full(), False)
+
+    def test_one_free_row(self):
+        input_grid = \
+            helper_functions.get_board_input(test_case=self.__class__.__name__,
+                                             test_name=sys._getframe().f_code.co_name)
+        board = Board(Rules(), input_grid)
+        self.assertEqual(board.is_grid_full(), False)
+
+    def test_one_free_slot(self):
+        input_grid = \
+            helper_functions.get_board_input(test_case=self.__class__.__name__,
+                                             test_name=sys._getframe().f_code.co_name)
+        board = Board(Rules(), input_grid)
+        self.assertEqual(board.is_grid_full(), False)    
 
 if __name__ == '__main__':
     unittest.main() 

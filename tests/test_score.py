@@ -169,30 +169,12 @@ class TestIsGridAlreadyWinning(unittest.TestCase):
             
         self.assertEqual(self.score.is_grid_already_winning(input_grid), False)
     
-    @unittest.SkipTest
-    def test_is_winnning(self):
+    def test_is_winning(self):
 
         input_grid = helper_functions.get_board_input(self.__class__.__name__,
                                                      sys._getframe().f_code.co_name)
             
         self.assertEqual(self.score.is_grid_already_winning(input_grid), True)
 
-        input_board = helper_functions.get_board_input(self.__class__.__name__,
-                                                     sys._getframe().f_code.co_name)
-        
-        targets = helper_functions.get_numeric_targets(self.__class__.__name__,
-                                                     sys._getframe().f_code.co_name) 
-
-        # include in test file?
-        start_row, start_col = 1, 1
-        piece = input_board[start_row][start_col]
-
-        for direction, target in zip(list(Directions), targets):
-            
-            recursive_count_result = self.score.recursive_count(direction, input_board,
-                                                                 start_row, start_col,
-                                                                 0, piece, 
-                                                                 visited_slots = set())
-            self.assertEqual(recursive_count_result, target) 
 if __name__ == '__main__':
     unittest.main()

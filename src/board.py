@@ -10,12 +10,13 @@ class Board:
         
         if grid is not None and self.is_valid_grid(grid):
             self.grid = grid
-            self.free_slot_in_columns = \
-                {col: self.find_free_slot_in_columns(col) for col in range(len(self.grid[0]))}
+            self.free_index_in_columns = \
+                {col: self.find_free_index_in_columns(col) 
+                 for col in range(len(self.grid[0]))}
         else:
             self.grid = self.make_grid()
-            self.free_slot_in_columns = \
-                {i : len(self.grid) for i in range(len(self.grid))}
+            self.free_index_in_columns = \
+                {i : len(self.grid) - 1 for i in range(len(self.grid))}
 
     def make_grid(self) -> list[list[Piece]]:
         return [[Piece.EMPTY for _ in range(self._rules.columns)] 
@@ -57,10 +58,7 @@ class Board:
 
         return True
 
-
-
-
-    def find_free_slot_in_columns(self, col: int) -> int:
+    def find_free_index_in_columns(self, col: int) -> int:
 
         """ Find first filled cell in column.
 
@@ -76,8 +74,12 @@ class Board:
         
         while(bottom_idx > top_idx):
 
+            if(idx == 0 \
+               and self.grid[idx][col] != Piece.EMPTY != self.grid[idx + 1][col]):
+                return -1
+
             if(self.grid[idx][col] == Piece.EMPTY != self.grid[idx + 1][col]):
-                return idx + 1
+                return idx
             
             if(self.grid[idx][col] == Piece.EMPTY == self.grid[idx + 1][col]):
                 top_idx = idx + 1
@@ -87,25 +89,32 @@ class Board:
             
             idx = (bottom_idx + top_idx) // 2
 
-        return idx + 1
+        return idx
 
-    def add_piece(self, piece: Piece, grid: list[list[Piece]], col: int) -> bool:
+    def add_piece(self, piece: Piece, col: int) -> bool:
         
         if self.is_grid_full():
             raise ValueError('Grid is full. Please start a new game.')
             
-        if self.free_slot_in_columns[col] > 0:
-            free_columns = [col for col, count in self.free_slot_in_columns 
-                            if count > 0]
-            error_msg = f'This column is full, you may try columns {free_columns}.'
-            raise ValueError(error_msg)
+        if self.free_index_in_columns[col] == -1:
+            free_columns = [col for col, count in self.free_index_in_columns.items() 
+                            if count >= 0]
+            raise ValueError('This column is full, you may try columns: ',
+                             f'{free_columns}.')
         
-        free_row = len(self.grid) - self.self.free_slot_in_columns[col]
-        grid[free_row][col] = piece
-        self.self.free_slot_in_columns[col] -= 1
+        free_row = self.free_index_in_columns[col]
+        self.grid[free_row][col] = piece
+        self.free_index_in_columns[col] -= 1
 
     def is_grid_full(self):
-        return not all(self.free_slot_in_columns.values()) 
+        return all(idx == - 1 for idx in self.free_index_in_columns.values()) 
 
     def display(self) -> None:
-        pass
+        num_cols = len(self.grid[0])  
+        separator = '+-' * 2 * num_cols + '+'  
+
+        print(separator)  
+        for row in self.grid:
+            row_disp = '| ' + ' | '.join(piece.value if piece != Piece('E') else '*' for piece in row) + ' |'
+            print(row_disp)
+            print(separator)
