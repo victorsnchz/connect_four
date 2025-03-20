@@ -17,6 +17,8 @@ class Board:
             self.grid = self.make_grid()
             self.free_index_in_columns = \
                 {i : len(self.grid) - 1 for i in range(len(self.grid))}
+            
+        self.last_played_move = None
 
     def make_grid(self) -> list[list[Piece]]:
         return [[Piece.EMPTY for _ in range(self._rules.columns)] 
@@ -104,7 +106,11 @@ class Board:
         
         free_row = self.free_index_in_columns[col]
         self.grid[free_row][col] = piece
-        self.free_index_in_columns[col] -= 1
+        self.last_played_move = (free_row, col)
+        self.free_index_in_columns[col] -= 1\
+
+    def get_last_played_move(self) -> tuple[int, int]:
+        return self.last_played_move
 
     def is_grid_full(self):
         return all(idx == - 1 for idx in self.free_index_in_columns.values()) 

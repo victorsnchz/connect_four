@@ -62,6 +62,9 @@ class Score:
         
         piece = grid[row][col]
 
+        if piece == Piece('E'):
+            raise ValueError('Please enter valid slod in grid, this one is empty.')
+
         for direction in \
             set(Directions).symmetric_difference(self._rules.exclude_directions):
             
