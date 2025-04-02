@@ -4,8 +4,8 @@ play connect-four against your friend (or yourself)
 Started as a small project, turned out to be way more interesting than expected.
 
 Algos:
-- (local) matrix BFS to check if player wins after a move
-- (global) matrix BFS to check if input grid contains a winning sequence
+- (local) matrix DFS to check if player wins after a move
+- (global) matrix DFS to check if input grid contains a winning sequence
 - binary search to find first slot free in a column
 
 Data struct:
